@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+<style>
+:root{--bg:#fff;--tx:#1f1f1f;--tx2:#5f6368;--bd:#dadce0;--side:#f8fafd;--hov:#e9eef6;--chip:#f0f4f9;--blue:#1a73e8;--sh:0 1px 3px rgba(60,64,67,.3)}
+body.dark{--bg:#131314;--tx:#e3e3e3;--tx2:#9aa0a6;--bd:#444746;--side:#1e1f20;--hov:#2d2f31;--chip:#1e1f20;--blue:#8ab4f8;--sh:0 1px 3px rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Google Sans","Product Sans",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+svg.i{width:24px;height:24px;fill:currentColor;display:block}
+.ib{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--tx2)}
+.ib:hover{background:var(--hov)}
+header{height:64px;display:flex;align-items:center;gap:8px;padding:0 16px;flex:none}
+.logo{font-size:22px;font-weight:500;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
+.badge{font-size:11px;border:1px solid var(--bd);border-radius:6px;padding:1px 6px;color:var(--tx2);font-weight:400}
+.sp{flex:1}
+.avatar{width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;display:grid;place-items:center;font-size:14px}
+.wrap{flex:1;display:flex;min-height:0}
+aside{width:272px;background:var(--side);padding:8px 12px;display:flex;flex-direction:column;flex:none;transition:margin .2s}
+aside.off{margin-left:-272px}
+.newc{display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:24px;background:var(--hov);font-weight:500;margin:4px 0 16px;width:max-content;min-width:132px}
+.newc .i{width:20px;height:20px}
+.lbl{font-size:14px;font-weight:500;padding:8px 12px;color:var(--tx)}
+#hist{flex:1;overflow:auto}
+.hi{display:block;width:100%;text-align:left;padding:8px 12px;border-radius:20px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi:hover{background:var(--hov)}.hi.on{background:var(--hov);color:var(--blue);font-weight:500}
+.nav{display:flex;align-items:center;gap:14px;width:100%;padding:10px 12px;border-radius:20px;font-size:14px;color:var(--tx)}
+.nav:hover{background:var(--hov)}.nav .i{width:20px;height:20px;color:var(--tx2)}
+.empty{font-size:13px;color:var(--tx2);padding:4px 12px}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+#chat{flex:1;overflow:auto;padding:8px 16px 16px}
+.col{max-width:760px;margin:0 auto}
+.welcome{padding-top:7vh}
+.welcome .big{width:48px;height:48px;margin-bottom:16px}
+.welcome h1{font-size:clamp(30px,5vw,48px);font-weight:500;margin:0 0 6px;letter-spacing:-1px;line-height:1.15;background:linear-gradient(74deg,#4285f4 0,#9b72cb 35%,#d96570 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.welcome h2{font-size:clamp(22px,3.5vw,32px);font-weight:500;margin:0 0 12px;color:#9aa0a6;letter-spacing:-.5px}
+.welcome p{color:var(--tx2);font-size:14px;margin:0 0 28px;max-width:560px;line-height:1.5}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.chip{background:var(--chip);border-radius:14px;padding:16px;text-align:left;font-size:14px;line-height:1.4;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+.chip:hover{background:var(--hov)}.chip .i{align-self:flex-end;color:var(--tx2);width:22px;height:22px}
+.u{display:flex;gap:16px;margin:24px 0 8px;align-items:flex-start}
+.u .avatar{flex:none}.u .ut{padding-top:5px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.b{display:flex;gap:16px;margin:8px 0 24px;align-items:flex-start}
+.av{flex:none;width:32px;height:32px;display:grid;place-items:center}
+.av svg{width:28px;height:28px}
+.spin svg{animation:sp 1.2s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.bt{flex:1;min-width:0}
+.txt{line-height:1.65;font-size:16px;word-break:break-word}
+.txt p{margin:0 0 12px}.txt ul{margin:0 0 12px;padding-left:24px}.txt li{margin-bottom:4px}.txt h4{margin:16px 0 6px;font-size:16px}
+.txt code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:14px}
+.txt pre{background:var(--chip);border:1px solid var(--bd);border-radius:12px;padding:14px;overflow:auto;margin:0 0 12px}
+.txt pre code{background:none;padding:0;font-size:13px;line-height:1.5}
+.think{color:var(--tx2);font-size:15px;padding-top:5px}
+.acts{display:flex;align-items:center;gap:2px;flex-wrap:wrap;margin-top:6px;margin-left:-8px}
+.acts .ib{width:36px;height:36px}.acts .i{width:20px;height:20px}
+.acts .on{color:var(--blue)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bd);border-radius:18px;padding:6px 14px;font-size:14px;color:var(--blue);margin-left:6px}
+.pill:hover{background:var(--hov)}.pill .i{width:18px;height:18px}
+.dr{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.dr button{border:1px solid var(--bd);border-radius:16px;padding:5px 14px;font-size:13px}
+.dr button.on{background:var(--hov);border-color:var(--blue);color:var(--blue)}
+.dr button:hover{background:var(--hov)}
+footer{flex:none;padding:0 16px 14px}
+.box{max-width:760px;margin:0 auto;display:flex;align-items:flex-end;gap:4px;border:1px solid var(--bd);border-radius:28px;padding:6px 8px 6px 20px;background:var(--bg);box-shadow:var(--sh)}
+.box:focus-within{border-color:var(--blue)}
+textarea{flex:1;border:0;outline:0!important;resize:none;background:none;color:var(--tx);font:inherit;font-size:16px;line-height:24px;padding:10px 0;max-height:160px}
+textarea::placeholder{color:var(--tx2)}
+#go{color:var(--blue)}#go:disabled{color:var(--bd);cursor:default}
+.note{max-width:760px;margin:10px auto 0;text-align:center;font-size:12px;color:var(--tx2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;place-items:center;z-index:20;padding:16px}
+.modal.on{display:grid}
+.card{background:var(--bg);border-radius:20px;padding:24px;width:min(440px,100%);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.card h3{margin:0 0 16px;font-weight:500;font-size:20px}
+.card label{display:block;font-size:13px;color:var(--tx2);margin:14px 0 4px}
+.card input[type=text],.card input[type=password]{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;background:none;color:var(--tx);font:inherit;font-size:14px}
+.card .row{display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.card small{display:block;color:var(--tx2);font-size:12px;line-height:1.45;margin-top:6px}
+.btns{display:flex;justify-content:space-between;gap:8px;margin-top:22px}
+.btns button{padding:9px 20px;border-radius:20px;font-size:14px;font-weight:500}
+.btns .p{background:var(--blue);color:#fff}body.dark .btns .p{color:#131314}
+.btns .s{color:var(--blue)}.btns .s:hover{background:var(--hov)}
+.cb{border:1px solid var(--bd);border-radius:12px;margin:0 0 12px;overflow:hidden}.cbh{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:var(--chip);font-size:12px;color:var(--tx2)}.cbh button{color:var(--blue);padding:2px 10px;border-radius:12px;font-size:12px}.cbh button:hover{background:var(--hov)}.txt .cb pre{border:0;border-radius:0;margin:0}.txt img.gen{max-width:100%;border-radius:12px;display:block;margin:0 0 12px;border:1px solid var(--bd)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#303134;color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+@media(max-width:800px){aside{position:fixed;z-index:10;top:64px;bottom:0;left:0;box-shadow:var(--sh)}aside.off{margin-left:-290px}.u,.b{gap:10px}}
+@media(prefers-reduced-motion:reduce){.spin svg{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4285f4"/><stop offset=".5" stop-color="#9b72cb"/><stop offset="1" stop-color="#d96570"/></linearGradient></defs></svg>
+
+<header>
+  <button class="ib" id="menu" aria-label="Menú" data-i="menu"></button>
+  <div class="logo">Bard <span class="badge">Experimento</span></div>
+  <div class="sp"></div>
+  <button class="ib" id="dk" aria-label="Cambiar tema" data-i="theme"></button>
+  <button class="ib" id="set1" aria-label="Ajustes" data-i="settings"></button>
+  <div class="avatar" aria-hidden="true">T</div>
+</header>
+
+<div class="wrap">
+  <aside id="side">
+    <button class="newc" id="new"><span data-i="plus"></span>Nuevo chat</button>
+    <div class="lbl">Reciente</div>
+    <div id="hist"></div>
+    <button class="nav" id="act"><span data-i="history"></span>Actividad de Bard</button>
+    <button class="nav" id="hlp"><span data-i="help"></span>Ayuda</button>
+    <button class="nav" id="set2"><span data-i="settings"></span>Ajustes</button>
+  </aside>
+  <main>
+    <div id="chat"><div class="col" id="msgs"></div></div>
+    <footer>
+      <div class="box">
+        <textarea id="inp" rows="1" placeholder="Escribe una petición aquí" aria-label="Petición"></textarea>
+        <button class="ib" id="mic" aria-label="Dictar" data-i="mic"></button>
+        <button class="ib" id="go" aria-label="Enviar" data-i="send" disabled></button>
+      </div>
+      <div class="note">Bard puede mostrar información inexacta u ofensiva que no representa la opinión de Google.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="modal" id="mod">
+  <div class="card" role="dialog" aria-label="Ajustes">
+    <h3>Ajustes</h3>
+    <div class="row"><span>Tema oscuro</span><input type="checkbox" id="sdark"></div>
+    <label for="skey">Clave de API de Google Gemini (opcional)</label>
+    <input type="password" id="skey" placeholder="AIza..." autocomplete="off">
+    <label for="smod">Modelo</label>
+    <input type="text" id="smod" placeholder="gemini-2.5-flash">
+    <label for="simg">Modelo de imágenes</label>
+    <input type="text" id="simg" placeholder="gemini-2.5-flash-image">
+    <small>Sin clave, Bard responde en modo demo con <span id="cnt"></span> respuestas de ejemplo, además de código e imágenes de muestra. Con clave, usa la API real de Gemini (funciona al abrir el archivo en tu navegador o en CodePen). La clave se guarda solo en este navegador.</small>
+    <div class="btns"><button class="s" id="clr">Borrar chats</button><span><button class="s" id="cx">Cancelar</button> <button class="p" id="sv">Guardar</button></span></div>
+  </div>
+</div>
+<div class="modal" id="pv"><div class="card" style="width:min(820px,100%)"><div class="row"><h3 style="margin:0">Vista previa</h3><button class="ib" id="pvx" aria-label="Cerrar">✕</button></div><iframe id="pvf" sandbox="allow-scripts" title="Vista previa" style="width:100%;height:60vh;margin-top:12px;border:1px solid var(--bd);border-radius:12px;background:#fff"></iframe></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const P={
+menu:'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
+plus:'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+send:'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z',
+mic:'M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z',
+up:'M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z',
+down:'M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z',
+refresh:'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z',
+copy:'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z',
+chev:'M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z',
+settings:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
+help:'M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z',
+history:'M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z',
+search:'M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
+theme:'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
+spark:'M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'
+};
+const ic=(n,c='i')=>`<svg class="${c}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
+const spark=c=>`<svg class="${c||''}" viewBox="0 0 24 24" aria-hidden="true"><path fill="url(#g)" d="${P.spark}"/></svg>`;
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=ic(e.dataset.i));
+
+const $=s=>document.querySelector(s);
+let S={key:'',model:'gemini-2.5-flash',imgModel:'gemini-2.5-flash-image',dark:false};
+try{Object.assign(S,JSON.parse(localStorage.getItem('bard')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('bard',JSON.stringify(S))}catch(e){}};
+let chats=[],cur=null,busy=false;
+const inp=$('#inp'),go=$('#go'),msgs=$('#msgs');
+
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function md(t){
+  return t.split('```').map((p,i)=>{
+    if(i%2){const lg=(p.match(/^([\w-]*)\n/)||[])[1]||'',cd=p.replace(/^[\w-]*\n/,'');return '<div class="cb"><div class="cbh"><span>'+(lg||'código')+'</span><span><button data-a="cc">Copiar</button>'+(/html/i.test(lg)||/^\s*<(!doctype|html)/i.test(cd)?'<button data-a="run">Ejecutar</button>':'')+'</span></div><pre><code>'+esc(cd)+'</code></pre></div>'}
+    const h=esc(p).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');
+    let out='',ul=false;
+    for(const l of h.split('\n')){
+      const m=l.match(/^\s*[*-]\s+(.*)/);
+      if(m){if(!ul){out+='<ul>';ul=true}out+='<li>'+m[1]+'</li>';continue}
+      if(ul){out+='</ul>';ul=false}
+      const hd=l.match(/^#{1,3}\s+(.*)/);
+      out+=hd?'<h4>'+hd[1]+'</h4>':(l.trim()?'<p>'+l+'</p>':'');
+    }
+    return out+(ul?'</ul>':'');
+  }).join('');
+}
+
+/* ---------- Respuestas ---------- */
+const FN=String.fromCharCode(96).repeat(3);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const lc=s=>/^[A-Z][a-z]/.test(s)?s.charAt(0).toLowerCase()+s.slice(1):s;
+const bl=a=>a.map(x=>'* '+cap(x)+'.').join('\n');
+const STYLES=[
+(n,F)=>`Aquí tienes lo esencial sobre **${n}**:\n\n${bl(F)}`,
+(n,F)=>`Claro. Sobre **${n}**, lo más importante es esto: ${lc(F[0])}. Además, ${lc(F[1])}. Para terminar, ${lc(F[2])}.`,
+(n,F)=>`Te lo explico en pasos sencillos sobre **${n}**:\n\n`+F.map((x,i)=>`* Paso ${i+1}: ${lc(x)}.`).join('\n'),
+(n,F)=>`En pocas palabras, sobre **${n}**: ${lc(F[0])}. ${cap(F[3])}.`,
+(n,F)=>`**Idea principal:** ${cap(F[0])}.\n\n**Ten en cuenta:** ${cap(F[3])}.`,
+(n,F)=>`Piensa en **${n}** como un proyecto que se arma por partes: ${lc(F[1])}; después, ${lc(F[2])}. La clave es avanzar sin prisa.`,
+(n,F)=>`Buena pregunta. Sobre **${n}**, empezaría por esto: ${lc(F[2])}.\n\nDespués:\n\n* ${cap(F[0])}.\n* ${cap(F[1])}.\n\n¿Quieres que profundice en algún punto?`,
+(n,F)=>`### ${cap(n)}\n\n**Lo básico**\n* ${cap(F[0])}.\n* ${cap(F[1])}.\n\n**Para ir más lejos**\n* ${cap(F[2])}.\n* ${cap(F[3])}.`,
+(n,F)=>`Mi consejo sobre **${n}**: ${lc(F[3])}. Y recuerda que ${lc(F[0])}.`,
+(n,F)=>`Estos son tres puntos clave sobre **${n}**:\n\n${bl(F.slice(0,3))}\n\n¿Seguimos con el siguiente tema?`,
+(n,F)=>`Directo al grano sobre **${n}**: ${lc(F[1])}. ${cap(F[2])}.`,
+(n,F)=>`Te lo cuento de lo práctico a lo general:\n\n${bl([F[3],F[2],F[1],F[0]])}`,
+(n,F)=>`**Mito común:** que entender **${n}** es complicado.\n\n**Realidad:** ${cap(F[0])}. ${cap(F[1])}.`,
+(n,F)=>`Lista rápida para **${n}**:\n\n`+F.map(x=>`* [ ] ${cap(x)}`).join('\n'),
+(n,F)=>`Este es un primer borrador sobre **${n}**:\n\n${cap(F[0])}. ${cap(F[1])}.\n\nPuedo hacerlo más corto, más detallado o con otro tono. ¿Qué prefieres?`,
+(n,F)=>`**Resumen:** ${cap(F[0])}.\n\n**Siguiente paso:** ${cap(F[2])}.`,
+(n,F)=>`Preguntas frecuentes sobre **${n}**:\n\n**¿Por dónde empiezo?** ${cap(F[0])}.\n\n**¿Qué debo tener presente?** ${cap(F[3])}.`,
+(n,F)=>`Con gusto te ayudo con **${n}**. ${cap(F[0])}, y ${lc(F[1])}. Si me cuentas tu situación, puedo adaptarlo mejor: ${lc(F[2])}.`,
+(n,F,c)=>c?`Te dejo un ejemplo sobre **${n}**:\n\n${FN}\n${c}\n${FN}\n\n${cap(F[0])}.`:`Un ejemplo práctico sobre **${n}**: ${lc(F[2])}. Con eso ya tienes una base para empezar.`,
+(n,F)=>`Esto es lo que te recomiendo sobre **${n}**:\n\n${bl(F.slice(1))}\n\nSi quieres, lo vemos con más detalle.`
+];
+const TOPICS=[
+['^(hola|buenas|hey|hi|hello|saludos)','cómo puedo ayudarte hoy',['Puedo explicarte un tema paso a paso','Puedo ayudarte a escribir o corregir un texto','Puedo darte ideas para un proyecto o un regalo','Puedo mostrarte un ejemplo de código sencillo']],
+['quien eres|que eres|\\bbard\\b|tu nombre|como te llamas','quién soy y qué hago',['Soy Bard, un experimento de Google','Estoy en modo demo con respuestas de ejemplo','Con una clave de API de Gemini respondo con el modelo real','Puedo escribir, resumir, planear y programar']],
+['gracias|thanks|\\bgenial\\b|perfecto','seguir con tu proyecto',['Me alegra que te sirviera','Dime qué parte quieres mejorar','Puedo reescribir la respuesta con otro tono','Puedo darte más ejemplos si los necesitas']],
+['fotosintesis|clorofila|plantas','la fotosíntesis',['Las plantas convierten luz en energía química','Ocurre en los cloroplastos gracias a la clorofila','Necesita luz, agua y dióxido de carbono','Produce glucosa y libera oxígeno']],
+['agujero negro|black hole|gravedad','los agujeros negros',['Son regiones donde la gravedad impide escapar incluso a la luz','Se forman cuando una estrella muy masiva colapsa','Su frontera se llama horizonte de sucesos','Los más grandes viven en el centro de las galaxias']],
+['sistema solar|planeta|marte|jupiter|\\bluna\\b','el sistema solar',['Casi toda la masa del sistema está en el Sol','Hay ocho planetas, cuatro rocosos y cuatro gigantes','El planeta más grande es Júpiter','Uno de los destinos más estudiados es Marte']],
+['dinosaurio|jurasico|extincion','los dinosaurios',['Dominaron la Tierra durante más de 160 millones de años','Su extinción masiva ocurrió hace unos 66 millones de años','Las aves actuales descienden de dinosaurios','Los fósiles nos cuentan cómo vivían']],
+['cambio climatico|calentamiento|\\bco2\\b|contaminacion|clima','el cambio climático',['La temperatura media global ha subido desde la era industrial','Los gases de efecto invernadero atrapan calor','Las energías renovables reducen emisiones','Cambiar hábitos de transporte y consumo también ayuda']],
+['agua|lluvia|nubes','el ciclo del agua',['El agua se evapora por el calor del Sol','El vapor se condensa y forma nubes','Cae como lluvia o nieve','Vuelve a ríos, mares y acuíferos']],
+['celula|\\badn\\b|genetica|genes','las células y el ADN',['La célula es la unidad básica de la vida','El ADN guarda las instrucciones para fabricar proteínas','Los genes se heredan de padres a hijos','Las mutaciones pueden ser neutras, dañinas o útiles']],
+['cuerpo humano|corazon|cerebro|sangre|pulmones','el cuerpo humano',['El corazón bombea sangre por todo el cuerpo','El cerebro coordina pensamientos y movimientos','Los pulmones intercambian oxígeno y dióxido de carbono','Dormir bien ayuda a todos los sistemas']],
+['dormir|sueno|insomnio','dormir mejor',['Mantén horarios regulares para acostarte y levantarte','Evita las pantallas una hora antes de dormir','Una habitación oscura y fresca ayuda','Reduce la cafeína por la tarde']],
+['ejercicio|gimnasio|entrenar|correr','hacer ejercicio',['Empieza con sesiones cortas y sube poco a poco','Combina fuerza, cardio y movilidad','Descansa para que el cuerpo se recupere','La constancia importa más que la intensidad']],
+['dieta|saludable|nutricion|alimentacion','comer de forma equilibrada',['Incluye frutas, verduras y proteínas durante el día','Prefiere los granos integrales','Bebe suficiente agua','Si tienes una condición médica, consulta a un profesional']],
+['receta|cocinar|cocina|pasta|pizza','cocinar algo rico',['Ordena los ingredientes antes de empezar','Prueba y ajusta la sal al final','Controla el fuego para no quemar la comida','Deja reposar el plato unos minutos antes de servir']],
+['mascota|perro|gato|cachorro','cuidar una mascota',['Necesita una alimentación adecuada a su edad','Las visitas al veterinario previenen problemas','El juego y el paseo diario le dan energía','La paciencia es clave para el entrenamiento']],
+['viaje|viajar|vacaciones|turismo','planear un viaje',['Define fechas y presupuesto primero','Reserva alojamiento con cancelación flexible','Haz una lista corta de lugares imprescindibles','Deja tiempo libre para improvisar']],
+['dinero|ahorro|ahorrar|presupuesto','ahorrar dinero',['Anota tus ingresos y tus gastos fijos','Separa un porcentaje para ahorrar apenas cobres','Crea un fondo de emergencia','Revisa las suscripciones que ya no uses']],
+['inversion|bolsa|acciones|bitcoin|cripto','las inversiones',['Invertir implica riesgo de perder dinero','Diversificar reduce el impacto de un mal resultado','El plazo largo suele suavizar la volatilidad','No soy asesor financiero: consulta a uno antes de decidir']],
+['trabajo|entrevista|curriculum|\\bcv\\b|empleo','buscar trabajo',['Adapta tu currículum a cada oferta','Destaca logros con números','Prepara ejemplos para la entrevista','Investiga la empresa antes de la reunión']],
+['estudiar|examen|tarea|escuela|universidad','estudiar mejor',['Divide el tema en bloques pequeños','Usa repaso espaciado en vez de repasar todo al final','Explícale el tema a alguien para detectar vacíos','Descansa cinco minutos cada media hora']],
+['matematicas|algebra|ecuacion|calculo|geometria','las matemáticas',['Empieza identificando qué te piden','Escribe cada paso en lugar de hacerlo de memoria','Verifica el resultado sustituyendo','Practicar problemas variados fija el método']],
+['fisica|energia|fuerza|velocidad','la física básica',['La fuerza cambia el movimiento de un cuerpo','La energía no se crea ni se destruye, se transforma','La velocidad mide cuánto cambia la posición en el tiempo','Los modelos simplifican la realidad para poder calcular']],
+['quimica|atomo|elemento|molecula','la química',['Toda la materia está hecha de átomos','Los átomos se unen formando moléculas','La tabla periódica ordena los elementos','Una reacción reorganiza átomos sin crearlos ni destruirlos']],
+['historia|guerra|imperio|revolucion|antiguo','estudiar historia',['Ubica los hechos en una línea de tiempo','Busca causas y consecuencias, no solo fechas','Contrasta varias fuentes','Pregúntate quién escribió cada relato y por qué']],
+['egipto|piramide|faraon|romano|\\broma\\b|griego','las civilizaciones antiguas',['Las pirámides de Egipto eran tumbas de faraones','La filosofía y la democracia nacieron en Grecia','El derecho romano y sus caminos se extendieron por Europa','Sus ideas siguen influyendo hoy']],
+['geografia|capital|continente|\\bmapa\\b|pais','la geografía',['La Tierra tiene siete continentes según el modelo más usado','Los mapas distorsionan algo al aplanar una esfera','Las capitales concentran gobierno y servicios','El clima depende de la latitud y la altitud']],
+['mexico|mexicano|latinoamerica','México',['Es un país con gran diversidad cultural y natural','Su gastronomía es Patrimonio Inmaterial de la Humanidad','Sus ciudades combinan herencia indígena y colonial','Tiene costas en el Pacífico y en el Golfo y el Caribe']],
+['musica|cancion|guitarra|piano|instrumento','aprender música',['Practica poco cada día en vez de mucho una vez','Aprende primero ritmo y escalas básicas','Toca piezas sencillas que te gusten','Grábate para escuchar tu progreso']],
+['pelicula|serie|cine|libro|leer','elegir qué ver o leer',['Piensa en el ánimo que buscas hoy','Revisa géneros que ya te gustaron','Lee la sinopsis antes de comprometerte','Si no te atrapa en 30 minutos, pasa a otra opción']],
+['videojuego|minecraft|gaming|\\bjugar|\\bjuego','los videojuegos',['Los juegos entrenan reflejos y resolución de problemas','Conviene alternar partidas con pausas','Los de mundo abierto premian la exploración','Crear tus propios juegos enseña a programar']],
+['programar|programacion|aprender codigo|principiante','aprender a programar',['Elige un lenguaje y quédate con él unos meses','Construye proyectos pequeños desde el inicio','Lee los errores con calma: suelen decir qué falla','Practicar a diario vale más que los maratones']],
+['html|css|pagina web|sitio web|\\bweb\\b|calculadora','crear una página web',['HTML da la estructura, CSS el estilo y JavaScript la interacción','Empieza con un solo archivo para probar rápido','Usa un diseño adaptable para que se vea bien en móvil','Revisa tu página con las herramientas del navegador'],"<h1>Hola, mundo</h1>\n<button onclick=\"alert('Hola')\">Saludar</button>"],
+['javascript|\\bjs\\b|funcion|variable|bucle','JavaScript',['Las variables se declaran con let y const','Las funciones agrupan código reutilizable','Los eventos permiten reaccionar al usuario','La consola del navegador sirve para probar ideas'],"const saludo = n => 'Hola, ' + n;\nconsole.log(saludo('mundo'));"],
+['python|\\bscript\\b|\\bpip\\b','Python',['Su sintaxis es clara y cercana al inglés','Sirve para automatizar tareas, analizar datos y crear sitios web','Las listas y los diccionarios son sus estructuras básicas','Las bibliotecas de terceros se instalan con pip'],"for i in range(3):\n    print('Hola', i)"],
+['error|\\bbug\\b|no funciona|falla|depurar','depurar un error',['Reproduce el problema de forma fiable','Lee el mensaje de error completo','Aísla la parte mínima que falla','Cambia una sola cosa a la vez y vuelve a probar']],
+['inteligencia artificial|\\bia\\b|chatgpt|gemini|modelo de lenguaje','la inteligencia artificial',['Un modelo de lenguaje predice texto a partir de patrones aprendidos','Puede equivocarse, así que conviene verificar datos importantes','Mejora con instrucciones claras y ejemplos','Es una herramienta: tú decides qué hacer con el resultado']],
+['internet|wifi|router|\\bred\\b','tu conexión a internet',['Reinicia el router si todo va lento','Acércate al router o usa un repetidor','Prueba la velocidad con cable y sin él','Cambia la contraseña que trae el router por defecto']],
+['seguridad|contrasena|hackeo|virus|antivirus|phishing','la seguridad digital',['Usa contraseñas largas y distintas en cada cuenta','Activa la verificación en dos pasos','Desconfía de enlaces y archivos inesperados','Mantén el sistema y las apps actualizados']],
+['celular|telefono|bateria|android|iphone','el celular',['Cierra las apps en segundo plano que no uses','Baja el brillo para ahorrar batería','Actualiza el sistema para mejorar la seguridad','Haz copias de seguridad de tus fotos']],
+['computadora|\\bpc\\b|windows|lento|laptop','una computadora lenta',['Revisa qué programas arrancan con el sistema','Libera espacio en el disco','Actualiza los controladores y el sistema','Un SSD mejora mucho la velocidad']],
+['diseno|logo|color|tipografia|\\bui\\b','diseñar algo atractivo',['Elige una paleta corta de colores','Usa una o dos tipografías','Deja espacio en blanco para que respire','Mantén la coherencia entre pantallas']],
+['poema|poesia|rima|verso','escribir un poema',['Elige una imagen concreta como punto de partida','Juega con el ritmo de las sílabas','La rima ayuda, pero no es obligatoria','Corta lo que no aporte emoción']],
+['escribir|redaccion|ensayo|carta|texto','escribir mejor',['Define a quién le escribes y para qué','Haz un esquema antes de redactar','Usa frases cortas y verbos claros','Relee en voz alta para detectar tropiezos']],
+['chiste|broma|gracioso|reir','contar un buen chiste',['El remate debe llegar al final de la frase','La sorpresa funciona mejor que explicar','Adapta el chiste al público','Si hay que explicarlo, ya perdió la gracia']],
+['regalo|cumpleanos|aniversario|sorpresa','elegir un regalo',['Piensa en lo que la persona usa o disfruta','Una experiencia puede valer más que un objeto','Un detalle personal cuenta más que el precio','Fija un presupuesto antes de buscar']],
+['amistad|pareja|amor|relacion|familia','cuidar una relación',['Escuchar sin interrumpir fortalece la confianza','Habla claro de lo que necesitas','Reserva tiempo de calidad','Pedir perdón a tiempo evita que crezcan los problemas']],
+['estres|ansiedad|calma|motivacion|animo','manejar el estrés',['Respira lento unos minutos para bajar la tensión','Divide tus pendientes en tareas pequeñas','Muévete un poco y toma aire fresco','Si el malestar dura mucho, habla con un profesional de salud']],
+['tiempo|organizar|productividad|habitos|procrastinar','organizar tu tiempo',['Elige las tres tareas más importantes del día','Bloquea horarios sin distracciones','Empieza por la tarea más difícil','Revisa tu semana cada domingo']],
+['negocio|emprender|empresa|marketing|vender','emprender',['Valida la idea con clientes reales antes de invertir','Empieza pequeño y mejora con los comentarios','Conoce tus costos y tu margen','Cuida la reputación: un cliente contento recomienda']],
+['idioma|ingles|traducir|frances|aleman','aprender un idioma',['Escucha y habla desde el primer día','Aprende frases completas, no solo palabras','Practica un poco cada día','Equivocarse es parte del proceso']],
+['animal|ballena|\\bave\\b|\\bpez\\b|oceano|\\bmar\\b','los animales y el mar',['Los océanos cubren más del 70 % de la Tierra','La ballena azul es el animal más grande conocido','Muchos animales marinos usan sonidos para comunicarse','Proteger los hábitats ayuda a todas las especies']],
+['deporte|futbol|baloncesto|partido|mundial','el deporte',['El trabajo en equipo decide muchos partidos','La preparación física previene lesiones','La estrategia cambia según el rival','Practicar con regularidad mejora la técnica']],
+['tecnologia|futuro|robot|espacio|ciencia','la ciencia y la tecnología',['La ciencia avanza probando ideas y corrigiéndolas','Los robots ya ayudan en fábricas y hospitales','La exploración espacial impulsa nuevos inventos','Hacer preguntas es el primer paso para descubrir']]
+];
+const TOP=TOPICS.map(t=>({r:new RegExp(t[0]),n:t[1],f:t[2],c:t[3]}));
+const GEN={n:null,f:['Conviene definir primero qué quieres lograr','Reúne la información básica y ordénala por prioridad','Empieza por el paso más pequeño y ajusta sobre la marcha','Pídeme más detalle si quieres profundizar en un punto'],c:null};
+const DEMO_N=(TOP.length+1)*STYLES.length;
+const cntEl=document.getElementById('cnt');if(cntEl)cntEl.textContent=DEMO_N;
+function build(t,s,q){const n=t.n||'«'+(q.length>60?q.slice(0,60)+'…':q)+'»';return STYLES[s](n,t.f,t.c)}
+function sim(q,v){
+  const t=norm(q);
+  let h=0;for(const ch of t)h=(h*31+ch.charCodeAt(0))>>>0;
+  const tp=TOP.find(x=>x.r.test(t))||GEN;
+  return build(tp,(h+v*7)%STYLES.length,q);
+}
+function norm(q){return q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
+const IMG='\u0001';
+function txtOf(d){return d.charAt(0)===IMG?(d.split(IMG)[3]||''):d}
+function view(d){if(d.charAt(0)!==IMG)return md(d);const p=d.split(IMG);return '<img class="gen" alt="Imagen generada" src="'+p[2]+'">'+md(p[3]||'')}
+const isImg=q=>{const t=norm(q);return /\b(dibuja|dibujame|dibujar|pinta|pintame|ilustra|ilustrame)\b/.test(t)||(/\b(genera|generame|generar|crea|creame|crear|haz|hazme|hacer|quiero|dame|muestrame)\b/.test(t)&&/\b(imagen|imagenes|foto|fotos|dibujo|ilustracion|paisaje|wallpaper|fondo de pantalla|poster|logo)\b/.test(t))||/\b(generate|draw)\b.*\b(image|picture)\b/.test(t)};
+function art(q,v){
+  const t=norm(q);let h=0;for(const ch of t)h=(h*31+ch.charCodeAt(0))>>>0;
+  let z=(h+v*977)>>>0;const r=()=>(z=(z*1664525+1013904223)>>>0)/4294967296;
+  const has=re=>re.test(t),night=has(/noche|luna|estrella|espacio|galaxia/),dusk=!night&&has(/atardecer|ocaso|amanecer|\bsol\b/);
+  const sk=night?['#0b1026','#3b2f7a']:dusk?['#ff9a5a','#6a4c93']:['#4aa3ff','#cdeeff'];
+  let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+sk[0]+'"/><stop offset="1" stop-color="'+sk[1]+'"/></linearGradient></defs><rect width="640" height="400" fill="url(#s)"/>';
+  if(night)for(let i=0;i<70;i++)s+='<circle cx="'+(r()*640|0)+'" cy="'+(r()*240|0)+'" r="'+(.6+r()*1.5).toFixed(1)+'" fill="#fff" opacity="'+(.4+r()*.6).toFixed(2)+'"/>';
+  const bx=90+(r()*460|0);
+  s+='<circle cx="'+bx+'" cy="'+(dusk?220:92)+'" r="'+(night?30:dusk?52:38)+'" fill="'+(night?'#f4f1de':dusk?'#ffd166':'#fff3b0')+'"/>';
+  const sea=has(/\bmar\b|oceano|playa|barco|isla|olas/),city=has(/ciudad|edificio|rascacielos/);
+  if(!sea&&!city)[['#6b7a99',170],['#4c5a7a',215]].forEach((m,k)=>{let p='0,400 0,'+m[1];for(let x=0;x<=640;x+=80)p+=' '+(x+40*r()|0)+','+(m[1]-40-r()*(100-k*30)|0)+' '+(x+80)+','+(m[1]+20*r()|0);s+='<polygon points="'+p+' 640,400" fill="'+m[0]+'" opacity="'+(night?.7:1)+'"/>'});
+  if(sea){
+    s+='<rect y="250" width="640" height="150" fill="'+(night?'#10305a':'#1e6fb8')+'"/>';
+    for(let i=0;i<9;i++){const y=265+i*15,x=r()*500|0;s+='<path d="M'+x+' '+y+' q20 -8 40 0 t40 0 t40 0" stroke="#fff" stroke-width="2" fill="none" opacity=".5"/>'}
+    const bo=60+(r()*400|0);s+='<path d="M'+bo+' 262 l90 0 l-18 22 l-54 0z" fill="#8d5524"/><path d="M'+(bo+45)+' 262 l0 -62 l38 56z" fill="#f5f5f5"/>';
+  }else{
+    s+='<rect y="300" width="640" height="100" fill="'+(night?'#1b2a49':'#4f8a4f')+'"/>';
+    if(city)for(let i=0;i<14;i++){const w=34+(r()*26|0),hh=80+(r()*170|0),x=i*46;s+='<rect x="'+x+'" y="'+(300-hh)+'" width="'+w+'" height="'+hh+'" fill="'+(night?'#222b45':'#5c677d')+'"/>';for(let j=0;j<hh/22-1;j++)s+='<rect x="'+(x+6)+'" y="'+(310-hh+j*22)+'" width="8" height="10" fill="'+(night?'#ffd166':'#cfe8ff')+'"/>'}
+    else for(let i=0;i<7;i++){const x=30+i*90+(r()*40|0),hh=50+(r()*40|0);s+='<rect x="'+(x-4)+'" y="'+(300+r()*30|0)+'" width="8" height="30" fill="#6b4226"/><polygon points="'+(x-30)+',330 '+x+','+(330-hh-30)+' '+(x+30)+',330" fill="'+(night?'#1f4d36':'#2e7d32')+'"/>';}
+    if(has(/flor|jardin|primavera/))for(let i=0;i<26;i++)s+='<circle cx="'+(r()*640|0)+'" cy="'+(335+r()*60|0)+'" r="5" fill="'+['#ff6b9d','#ffd166','#fff','#c77dff'][i%4]+'"/>';
+  }
+  return 'data:image/svg+xml;utf8,'+encodeURIComponent(s+'</svg>');
+}
+const artReply=(q,v)=>IMG+'IMG'+IMG+art(q,v)+IMG+'Aquí tienes una ilustración para **«'+(q.length>70?q.slice(0,70)+'…':q)+'»**. Estás en modo demo, así que es un dibujo generado en tu navegador. Con una clave de Gemini en Ajustes genero imágenes reales.';
+async function geminiImg(q){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(S.imgModel||'gemini-2.5-flash-image')+':generateContent?key='+encodeURIComponent(S.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:q}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error&&d.error.message||('Error '+r.status));
+  const ps=(d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[];
+  const im=ps.find(p=>p.inlineData),tx=ps.map(p=>p.text||'').join('').trim();
+  if(!im)throw new Error(tx||'El modelo no devolvió ninguna imagen.');
+  return IMG+'IMG'+IMG+'data:'+im.inlineData.mimeType+';base64,'+im.inlineData.data+IMG+(tx||'Aquí tienes tu imagen.');
+}
+const CODE=[
+[/calculadora/,'Calculadora',`<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:260px;margin:20px auto">
+<input id="d" readonly ondblclick="this.value=''" style="width:100%;font-size:24px;text-align:right">
+<div id="k" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px"></div>
+<script>
+const d=document.getElementById('d'),k=document.getElementById('k');
+'789/456*123-0.=+'.split('').forEach(c=>{const b=document.createElement('button');b.textContent=c;b.style.cssText='padding:14px;font-size:18px';
+b.onclick=()=>{if(c==='=')try{d.value=Function('return '+d.value)()}catch(e){d.value='Error'}else d.value+=c};k.append(b)});
+<\/script></body></html>`],
+[/reloj|hora/,'Reloj digital',`<!DOCTYPE html><html><body style="background:#111;color:#0f0;font:700 15vw monospace;display:grid;place-items:center;height:100vh;margin:0">
+<div id="t"></div>
+<script>setInterval(()=>t.textContent=new Date().toLocaleTimeString(),500)<\/script></body></html>`],
+[/contador/,'Contador',`<!DOCTYPE html><html><body style="font-family:sans-serif;text-align:center;margin-top:60px">
+<h1 id="n">0</h1>
+<button onclick="n.textContent=--c">-</button> <button onclick="n.textContent=++c">+</button> <button onclick="n.textContent=c=0">Reiniciar</button>
+<script>let c=0<\/script></body></html>`],
+[/cronometro|temporizador/,'Cronómetro',`<!DOCTYPE html><html><body style="font-family:sans-serif;text-align:center;margin-top:60px">
+<h1 id="t">0.0</h1>
+<button onclick="go()">Iniciar / Pausar</button> <button onclick="s=0;show()">Reiniciar</button>
+<script>
+let s=0,i=null;
+const show=()=>t.textContent=(s/10).toFixed(1);
+function go(){if(i){clearInterval(i);i=null}else i=setInterval(()=>{s++;show()},100)}
+<\/script></body></html>`],
+[/adivin|numero secreto|juego/,'Juego de adivinar el número',`<!DOCTYPE html><html><body style="font-family:sans-serif;text-align:center;margin-top:60px">
+<h2>Adivina el número (1-100)</h2>
+<input id="g" type="number"> <button onclick="check()">Probar</button>
+<p id="m"></p>
+<script>
+let n=1+Math.floor(Math.random()*100),tries=0;
+function check(){const v=+g.value;tries++;
+ m.textContent=v===n?'¡Correcto en '+tries+' intentos!':v<n?'Más alto':'Más bajo';
+ if(v===n){n=1+Math.floor(Math.random()*100);tries=0}}
+<\/script></body></html>`],
+[/tareas|todo|pendientes/,'Lista de tareas',`<!DOCTYPE html><html><body style="font-family:sans-serif;max-width:360px;margin:30px auto">
+<h2>Mis tareas</h2>
+<input id="i" placeholder="Nueva tarea"> <button onclick="add()">Añadir</button>
+<ul id="l"></ul>
+<script>
+function add(){if(!i.value.trim())return;const li=document.createElement('li');li.textContent=i.value;li.onclick=()=>li.style.textDecoration='line-through';li.ondblclick=()=>li.remove();l.append(li);i.value=''}
+<\/script></body></html>`],
+[/pizarra|paint|lienzo|canvas/,'Pizarra para dibujar',`<!DOCTYPE html><html><body style="margin:0">
+<canvas id="c" width="600" height="400" style="border:1px solid #ccc;touch-action:none"></canvas>
+<script>
+const x=c.getContext('2d');let d=false;
+c.onpointerdown=e=>{d=true;x.beginPath();x.moveTo(e.offsetX,e.offsetY)};
+c.onpointermove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke()}};
+c.onpointerup=()=>d=false;
+<\/script></body></html>`]
+];
+const FNS=[
+[/fibonacci/,'Fibonacci',"function fib(n){let a=0,b=1;for(let i=0;i<n;i++)[a,b]=[b,a+b];return a}\nconsole.log(fib(10)); // 55","def fib(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\n\nprint(fib(10))  # 55"],
+[/factorial/,'Factorial',"const fact = n => n <= 1 ? 1 : n * fact(n - 1);\nconsole.log(fact(5)); // 120","def fact(n):\n    return 1 if n <= 1 else n * fact(n - 1)\n\nprint(fact(5))  # 120"],
+[/primo/,'Número primo',"function esPrimo(n){if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true}\nconsole.log(esPrimo(17)); // true","def es_primo(n):\n    if n < 2:\n        return False\n    i = 2\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 1\n    return True\n\nprint(es_primo(17))  # True"],
+[/invertir|reverse|al reves/,'Invertir un texto',"const invertir = s => [...s].reverse().join('');\nconsole.log(invertir('hola')); // aloh","def invertir(s):\n    return s[::-1]\n\nprint(invertir('hola'))  # aloh"],
+[/ordenar|sort/,'Ordenar una lista',"const nums = [5, 2, 9, 1];\nnums.sort((a, b) => a - b);\nconsole.log(nums); // [1, 2, 5, 9]","nums = [5, 2, 9, 1]\nnums.sort()\nprint(nums)  # [1, 2, 5, 9]"],
+[/hola mundo|hello world/,'Hola mundo',"console.log('¡Hola, mundo!');","print('¡Hola, mundo!')"]
+];
+const GENPAGE=q=>'<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>'+esc(q.slice(0,60))+'</title><style>body{font-family:sans-serif;max-width:640px;margin:40px auto;padding:0 16px}h1{color:#1a73e8}</style></head><body>\n<h1>'+esc(q.slice(0,60))+'</h1>\n<p>Escribe aquí tu contenido.</p>\n<button onclick="alert(\'¡Funciona!\')">Probar</button>\n</body></html>';
+function codeReply(q,v){
+  const t=norm(q);
+  if(!/\b(crea|crear|haz|hazme|hacer|genera|generar|escribe|escribir|programa|programar|desarrolla|necesito|quiero)\b/.test(t)||!/\b(html|pagina|app|aplicacion|juego|programa|codigo|script|funcion|python|javascript|js|calculadora|reloj|contador|cronometro|tareas|web|sitio|pizarra)\b/.test(t))return null;
+  const I=['Aquí tienes el código.','Te dejo otra versión.','Esta es una tercera opción.'][v%3];
+  const F=FNS.find(f=>f[0].test(t));
+  if(F){const py=/python/.test(t);return I+' **'+F[1]+'** en '+(py?'Python':'JavaScript')+':\n\n'+FN+(py?'python\n'+F[3]:'javascript\n'+F[2])+'\n'+FN+'\n\n¿Quieres que lo explique línea por línea?'}
+  const H=CODE.find(c=>c[0].test(t));
+  return I+' **'+(H?H[1]:'Página web básica')+'**:\n\n'+FN+'html\n'+(H?H[2]:GENPAGE(q))+'\n'+FN+'\n\nPulsa **Ejecutar** para verlo funcionando aquí mismo, o cópialo en un archivo .html.';
+}
+async function gemini(hist,temp){
+  const contents=hist.map(m=>({role:m.role==='user'?'user':'model',parts:[{text:m.role==='user'?m.text:txtOf(m.drafts[m.di])}]}));
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(S.model||'gemini-2.5-flash')+':generateContent?key='+encodeURIComponent(S.key),{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents,systemInstruction:{parts:[{text:'Eres Bard, un colaborador creativo y útil de Google. Responde en el idioma del usuario, con claridad y con Markdown simple. Si piden código, entrégalo en bloques con el lenguaje indicado y, para páginas, en un solo archivo HTML.'}]},generationConfig:{temperature:temp}})});
+  const d=await r.json();
+  if(!r.ok)throw new Error(d.error&&d.error.message||('Error '+r.status));
+  const c=d.candidates&&d.candidates[0];
+  return c&&c.content&&c.content.parts?c.content.parts.map(p=>p.text||'').join(''):'No pude generar una respuesta para eso.';
+}
+async function reply(c,m,v){
+  const hist=c.msgs.slice(0,c.msgs.indexOf(m)).filter(x=>!x.pending||x.role==='user');
+  const img=isImg(m.q);
+  if(S.key)return img?geminiImg(m.q):gemini(hist,Math.min(1.2,.7+.2*v));
+  await new Promise(r=>setTimeout(r,img?1400:800));
+  return img?artReply(m.q,v):(codeReply(m.q,v)||sim(m.q,v));
+}
+
+/* ---------- Estado y vista ---------- */
+const curChat=()=>chats.find(x=>x.id===cur);
+function render(){
+  $('#hist').innerHTML=chats.length?chats.map(x=>`<button class="hi ${x.id===cur?'on':''}" data-id="${x.id}">${esc(x.title)}</button>`).join(''):'<div class="empty">Aún no hay chats</div>';
+  const c=curChat();
+  if(!c||!c.msgs.length){
+    msgs.innerHTML=`<div class="welcome">${spark('big')}<h1>Hola, soy Bard</h1><h2>Tu colaborador creativo y útil.</h2>
+    <p>Puedo ayudarte a generar ideas, escribir, aprender, programar y crear imágenes.${S.key?'':' Estás en modo demo: agrega una clave de API de Gemini en Ajustes para respuestas reales.'}</p>
+    <div class="chips">${['Dame ideas de regalo para un cumpleaños','Dibuja un paisaje de montañas al atardecer','Crea un juego para adivinar un número','Crea una calculadora en HTML'].map(s=>`<button class="chip" data-q="${s}">${s}${ic('search')}</button>`).join('')}</div></div>`;
+    return;
+  }
+  msgs.innerHTML=c.msgs.map((m,i)=>{
+    if(m.role==='user')return `<div class="u"><div class="avatar" aria-hidden="true">T</div><div class="ut">${esc(m.text)}</div></div>`;
+    const dr=m.open?`<div class="dr">${m.drafts.map((_,k)=>`<button data-a="d" data-i="${i}" data-k="${k}" class="${k===m.di?'on':''}">Borrador ${k+1}</button>`).join('')}${m.drafts.length<3?`<button data-a="regen" data-i="${i}">+ Nuevo borrador</button>`:''}</div>`:'';
+    if(m.pending)return `<div class="b"><div class="av spin">${spark()}</div><div class="bt"><div class="think">Bard está pensando…</div></div></div>`;
+    return `<div class="b"><div class="av">${spark()}</div><div class="bt"><div class="txt" id="t${i}">${view(m.drafts[m.di])}</div>
+    <div class="acts">
+      <button class="ib ${m.fb==='up'?'on':''}" data-a="up" data-i="${i}" aria-label="Buena respuesta">${ic('up')}</button>
+      <button class="ib ${m.fb==='down'?'on':''}" data-a="down" data-i="${i}" aria-label="Mala respuesta">${ic('down')}</button>
+      <button class="ib" data-a="regen" data-i="${i}" aria-label="Regenerar">${ic('refresh')}</button>
+      <button class="ib" data-a="copy" data-i="${i}" aria-label="Copiar">${ic('copy')}</button>
+      <button class="pill" data-a="google" data-i="${i}">${ic('search')}Búscalo en Google</button>
+      <button class="pill" data-a="drafts" data-i="${i}">Ver otros borradores ${ic('chev')}</button>
+    </div>${dr}</div></div>`;
+  }).join('');
+  const last=c.msgs[c.msgs.length-1];
+  if(last&&last.fresh){
+    last.fresh=false;
+    const el=$('#t'+(c.msgs.length-1)),txt=last.drafts[last.di];
+    if(el&&txt.charAt(0)==='\u0001'){el.innerHTML=view(txt)}else if(el){busy=true;let n=0;const st=Math.max(2,Math.ceil(txt.length/160));
+      const iv=setInterval(()=>{n+=st;el.innerHTML=md(txt.slice(0,n));scrollEnd();
+        if(n>=txt.length){clearInterval(iv);el.innerHTML=md(txt);busy=false;upd()}},16)}
+  }
+  scrollEnd();
+}
+const scrollEnd=()=>{const e=$('#chat');e.scrollTop=e.scrollHeight};
+const upd=()=>{go.disabled=busy||!inp.value.trim()};
+
+async function gen(c,m,v,idx){
+  m.pending=true;busy=true;render();
+  try{m.drafts[idx]=await reply(c,m,v)}
+  catch(e){m.drafts[idx]='No pude conectar con Gemini: '+e.message+'\n\nRevisa tu clave de API y el modelo en Ajustes.'}
+  m.di=idx;m.pending=false;m.fresh=true;busy=false;render();upd();
+}
+function send(text){
+  text=text.trim();if(!text||busy)return;
+  let c=curChat();
+  if(!c){c={id:Date.now(),title:text.slice(0,34),msgs:[]};chats.unshift(c);cur=c.id}
+  c.msgs.push({role:'user',text});
+  const m={role:'bot',drafts:[],di:0,q:text,pending:true};
+  c.msgs.push(m);
+  inp.value='';inp.style.height='auto';
+  gen(c,m,0,0);
+}
+
+/* ---------- Eventos ---------- */
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)};
+inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,160)+'px';upd()});
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(inp.value)}});
+go.onclick=()=>send(inp.value);
+$('#mic').onclick=()=>toast('El dictado por voz no está disponible en esta versión');
+$('#menu').onclick=()=>$('#side').classList.toggle('off');
+$('#new').onclick=()=>{cur=null;render();inp.focus()};
+$('#act').onclick=()=>toast('Tu actividad se guarda solo en este navegador');
+$('#hlp').onclick=()=>toast('Escribe una petición abajo y presiona Enter');
+$('#hist').onclick=e=>{const b=e.target.closest('.hi');if(b){cur=+b.dataset.id;render()}};
+msgs.onclick=e=>{
+  const cb=e.target.closest('.cbh button');
+  if(cb){const code=cb.closest('.cb').querySelector('code').textContent;
+    if(cb.dataset.a==='cc'){try{navigator.clipboard.writeText(code);toast('Código copiado')}catch(x){toast('No se pudo copiar')}}
+    else{$('#pvf').srcdoc=code;$('#pv').classList.add('on')}
+    return}
+  const ch=e.target.closest('.chip');if(ch){send(ch.dataset.q);return}
+  const b=e.target.closest('[data-a]');if(!b||busy&&b.dataset.a!=='copy')return;
+  const c=curChat(),i=+b.dataset.i,m=c.msgs[i],a=b.dataset.a;
+  if(a==='up'||a==='down'){m.fb=m.fb===a?null:a;render()}
+  else if(a==='copy'){try{navigator.clipboard.writeText(txtOf(m.drafts[m.di]));toast('Copiado')}catch(x){toast('No se pudo copiar')}}
+  else if(a==='google')window.open('https://www.google.com/search?q='+encodeURIComponent(m.q),'_blank','noopener');
+  else if(a==='drafts'){m.open=!m.open;render()}
+  else if(a==='d'){m.di=+b.dataset.k;m.fresh=false;render()}
+  else if(a==='regen'){m.open=true;gen(c,m,m.drafts.length<3?m.drafts.length:m.di+1,m.drafts.length<3?m.drafts.length:m.di)}
+};
+function theme(){document.body.classList.toggle('dark',S.dark)}
+$('#dk').onclick=()=>{S.dark=!S.dark;theme();save()};
+const openSet=()=>{$('#sdark').checked=S.dark;$('#skey').value=S.key;$('#smod').value=S.model;$('#simg').value=S.imgModel||'';$('#mod').classList.add('on')};
+$('#set1').onclick=openSet;$('#set2').onclick=openSet;
+$('#cx').onclick=()=>$('#mod').classList.remove('on');
+$('#mod').onclick=e=>{if(e.target.id==='mod')$('#mod').classList.remove('on')};
+$('#sv').onclick=()=>{S.dark=$('#sdark').checked;S.key=$('#skey').value.trim();S.model=$('#smod').value.trim()||'gemini-2.5-flash';S.imgModel=$('#simg').value.trim()||'gemini-2.5-flash-image';save();theme();$('#mod').classList.remove('on');render();toast(S.key?'Conectado a Gemini':'Modo demo activo')};
+$('#clr').onclick=()=>{chats=[];cur=null;$('#mod').classList.remove('on');render()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#mod').classList.remove('on')});
+if(innerWidth<=800)$('#side').classList.add('off');
+const closePv=()=>{$('#pv').classList.remove('on');$('#pvf').srcdoc=''};
+$('#pvx').onclick=closePv;$('#pv').onclick=e=>{if(e.target.id==='pv')closePv()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePv()});
+theme();render();
+</script>
+</body>
+</html>
